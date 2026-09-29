@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class RateLimiterService {
 
-    private static final Logger log = LoggerFactory.getLogger(RateLimiterService.java);
+    private static final Logger log = LoggerFactory.getLogger(RateLimiterService.class);
 
     @Value("${taskflow.rate-limit.capacity:100}")
     private int capacity;

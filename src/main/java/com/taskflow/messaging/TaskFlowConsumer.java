@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskFlowConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskFlowConsumer.java);
+    private static final Logger log = LoggerFactory.getLogger(TaskFlowConsumer.class);
 
     private final JobProcessor jobProcessor;
     private final InProcessEventBus inProcessEventBus;

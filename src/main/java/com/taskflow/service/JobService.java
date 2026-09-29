@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class JobService {
 
-    private static final Logger log = LoggerFactory.getLogger(JobService.java);
+    private static final Logger log = LoggerFactory.getLogger(JobService.class);
 
     private final JobRepository jobRepository;
     private final JobAttemptRepository jobAttemptRepository;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskFlowProducer {
 
-    private static final Logger log = LoggerFactory.getLogger(TaskFlowProducer.java);
+    private static final Logger log = LoggerFactory.getLogger(TaskFlowProducer.class);
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final InProcessEventBus inProcessEventBus;

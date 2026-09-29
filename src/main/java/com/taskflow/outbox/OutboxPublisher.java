@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class OutboxPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(OutboxPublisher.java);
+    private static final Logger log = LoggerFactory.getLogger(OutboxPublisher.class);
 
     private final OutboxEventRepository outboxEventRepository;
     private final TaskFlowProducer taskFlowProducer;

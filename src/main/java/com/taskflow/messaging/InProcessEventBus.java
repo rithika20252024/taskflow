@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 @Component
 public class InProcessEventBus {
 
-    private static final Logger log = LoggerFactory.getLogger(InProcessEventBus.java);
+    private static final Logger log = LoggerFactory.getLogger(InProcessEventBus.class);
 
     private final BlockingQueue<JobEvent> jobQueue = new LinkedBlockingQueue<>();
     private final ScheduledExecutorService retryScheduler = Executors.newScheduledThreadPool(2);

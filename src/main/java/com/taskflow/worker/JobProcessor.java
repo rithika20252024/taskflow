@@ -19,7 +19,7 @@ import java.util.UUID;
 @Component
 public class JobProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(JobProcessor.java);
+    private static final Logger log = LoggerFactory.getLogger(JobProcessor.class);
 
     private final JobService jobService;
     private final ObjectMapper objectMapper = new ObjectMapper();
