@@ -1,4 +1,4 @@
-# ⚡ TaskFlow — Distributed Job Queue & Workflow Scheduler
+#  TaskFlow — Distributed Job Queue & Workflow Scheduler
 
 TaskFlow is a production-grade distributed job orchestration platform built with **Java 17**, **Spring Boot 3.2**, **Apache Kafka**, **PostgreSQL**, **Redis**, and **Docker Compose**.
 
@@ -6,7 +6,7 @@ It demonstrates core distributed systems engineering principles: **idempotent ta
 
 ---
 
-## 📸 Interactive Web Dashboard & Race Simulator
+## Interactive Web Dashboard & Race Simulator
 
 TaskFlow includes a built-in single-page web dashboard served directly by Spring Boot at `http://localhost:8080`:
 
@@ -18,9 +18,8 @@ TaskFlow includes a built-in single-page web dashboard served directly by Spring
 
 ---
 
-## 🚀 Resume Bullet Points
+## what acheived in project
 
-> **Add these bullet points to your resume under Projects:**
 
 - **Architected TaskFlow, a distributed job orchestration engine in Java 17 and Spring Boot 3.2**, supporting asynchronous execution across horizontally scalable worker instances with Apache Kafka and PostgreSQL.
 - **Implemented an Idempotent Submission Engine using `Idempotency-Key` headers and database constraints**, guaranteeing zero duplicate job executions during network timeouts or client retries.
@@ -31,7 +30,7 @@ TaskFlow includes a built-in single-page web dashboard served directly by Spring
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
                          ┌────────────────────────────────────┐
@@ -89,7 +88,7 @@ TaskFlow includes a built-in single-page web dashboard served directly by Spring
 
 ---
 
-## 🔄 State Machine & Transition Invariants
+## State Machine & Transition Invariants
 
 TaskFlow enforces strict lifecycle state transitions via `JobStateMachine`:
 
@@ -114,7 +113,7 @@ stateDiagram-v2
 
 ---
 
-## 💡 Key Distributed Systems Engineering Decisions
+##  Key Distributed Systems Engineering Decisions
 
 ### 1. Why Optimistic Locking (`@Version`) over Distributed Locks (Redis Redlock / ZooKeeper)?
 - **Problem:** When 20 worker instances poll the queue, multiple workers might grab the same job at the same millisecond. Using distributed locks (e.g., Redis Redlock) introduces network round-trips, lock lease expiration bugs, and split-brain risks during network partitions.
@@ -208,7 +207,7 @@ taskflow/
 
 ---
 
-## 🧪 Benchmark & Concurrency Test Results
+##  Benchmark & Concurrency Test Results
 
 | Test Scenario | Threads / Contenders | Invariant Tested | Result |
 | :--- | :---: | :--- | :---: |
@@ -256,12 +255,14 @@ curl -X POST "http://localhost:8080/api/v1/jobs/{jobId}/simulate-race?workerCoun
 
 ---
 
-## 🏃 Running Locally
+##  Running Locally
 
 ### Option 1: Standalone Mode (Zero Dependencies)
 Run immediately without requiring local Docker, Kafka, or PostgreSQL (uses embedded H2 and concurrent in-process event bus):
 
 ```bash
+git clone https://github.com/rithika20252024/taskflow
+cd taskflow
 mvn spring-boot:run
 ```
 
@@ -271,12 +272,14 @@ Open `http://localhost:8080` in your web browser.
 Spawns PostgreSQL, Kafka, Redis, API service, and 3 horizontally scaled worker instances:
 
 ```bash
+git clone https://github.com/rithika20252024/taskflow
+cd taskflow
 docker compose up --build --scale taskflow-worker=3
 ```
 
 ---
 
-## 🔬 Running Automated Tests
+## Running Automated Tests
 
 Run the full unit, integration, and concurrency test suites:
 
@@ -286,7 +289,7 @@ mvn clean test
 
 ---
 
-## 👤 Author & License
+##  Author & License
 - **Author:** Rithika S ([@rithika20252024](https://github.com/rithika20252024))
 - **Repository:** [https://github.com/rithika20252024/taskflow](https://github.com/rithika20252024/taskflow)
 - **License:** MIT License
