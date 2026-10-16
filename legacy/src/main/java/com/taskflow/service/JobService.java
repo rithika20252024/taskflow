@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -227,6 +229,12 @@ public class JobService {
     @Transactional(readOnly = true)
     public List<Job> getRecentJobs() {
         return jobRepository.findTop50ByOrderByCreatedAtDesc();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Job> searchJobs(JobStatus status, String type, Pageable pageable) {
+        String normalizedType = type == null || type.isBlank() ? null : type.trim();
+        return jobRepository.searchJobs(status, normalizedType, pageable);
     }
 
     @Transactional(readOnly = true)

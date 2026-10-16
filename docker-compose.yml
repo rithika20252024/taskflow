@@ -1,82 +1,45 @@
-version: '3.8'
-
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: taskflow-zookeeper
+  db:
+    image: postgres:16-alpine
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-
-  kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: taskflow-kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-  postgres:
-    image: postgres:15-alpine
-    container_name: taskflow-postgres
-    ports:
-      - "5432:5432"
-    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow
       POSTGRES_DB: taskflow
-      POSTGRES_USER: taskflow_user
-      POSTGRES_PASSWORD: taskflow_password
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    container_name: taskflow-redis
-    ports:
-      - "6379:6379"
-
-  taskflow-api:
-    build: .
-    container_name: taskflow-api
-    depends_on:
-      - kafka
-      - postgres
-      - redis
-    ports:
-      - "8080:8080"
+    ports: ["5432:5432"]
+    volumes: ["taskflow-db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow -d taskflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: ["npx", "prisma", "migrate", "deploy", "--config=prisma.config.ts"]
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taskflow
-      SPRING_DATASOURCE_USERNAME: taskflow_user
-      SPRING_DATASOURCE_PASSWORD: taskflow_password
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      TASKFLOW_NODE_ROLE: API
-
-  taskflow-worker:
-    build: .
+      DATABASE_URL: postgresql://taskflow:taskflow@db:5432/taskflow?schema=public
     depends_on:
-      - kafka
-      - postgres
-      - redis
+      db: { condition: service_healthy }
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taskflow
-      SPRING_DATASOURCE_USERNAME: taskflow_user
-      SPRING_DATASOURCE_PASSWORD: taskflow_password
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      TASKFLOW_NODE_ROLE: WORKER
-
+      DATABASE_URL: postgresql://taskflow:taskflow@db:5432/taskflow?schema=public
+      JWT_SECRET: ${JWT_SECRET:-local-development-secret-change-this-32-chars}
+      CORS_ORIGIN: http://localhost:3000
+      PORT: 4000
+    ports: ["4000:4000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4000
+    ports: ["3000:3000"]
+    depends_on: [api]
 volumes:
-  pgdata:
+  taskflow-db:
